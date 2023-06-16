@@ -8,9 +8,9 @@ async function cli() {
   const commander = new Command();
   commander
     .version(pkg.version)
-    .option('-i --input', 'Input files', './**/*.ts')
-    .option('-o --output', 'Output files')
-    .option('-q --quiet', 'Quiet mode', false)
+    .option('-i --input <path>', 'Input files', './**/*.ts')
+    .option('-o --output <path>', 'Output files')
+    .option('-q --quiet', 'Quiet mode')
     /*.option('-C --class-only', 'Only include classes', false)
     .option('-I --interface-only', 'Only include interfaces', false)
     // should come with a tag to give something a desired cardinality e.g. // uml-cardinality-1-* or // uml-cardinality-10-20
