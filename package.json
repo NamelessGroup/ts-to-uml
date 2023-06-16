@@ -1,0 +1,27 @@
+{
+  "name": "ts-to-uml",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NamelessGroup/ts-to-uml.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NamelessGroup/ts-to-uml/issues"
+  },
+  "homepage": "https://github.com/NamelessGroup/ts-to-uml#readme",
+  "dependencies": {
+    "chalk": "^5.2.0",
+    "commander": "^11.0.0",
+    "typescript": "^5.1.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.3.1"
+  }
+}
