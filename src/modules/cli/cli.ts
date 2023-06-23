@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import pkg from '../package.json';
+import pkg from '../../../package.json';
 import chalk from 'chalk'
 
 let isQuiet = false;
