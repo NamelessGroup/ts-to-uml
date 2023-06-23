@@ -1,15 +1,20 @@
 import { DateTime } from "luxon";
 
-
+/**
+ * converts commit generated with: git log --pretty=format:"%at" --name-only --no-merges to a Record<string, ganttDates>
+ *
+ * @param commitHistory the git commit history
+ */
 export function transformGitCommitHistory(commitHistory: string): Record<string, ganttDates> {
     const commitHistoryLines = commitHistory.split("\n");
 
     let returnRecord: Record<string, ganttDates> = {};
 
+    let lastDate = DateTime.fromSeconds(0);
     for (const [id, line] of commitHistoryLines.entries()) {
-        let lastDate = DateTime.fromSeconds(0);
         if (line.match("\\d+")) {
             lastDate = DateTime.fromSeconds(parseInt(line));
+            //console.log(lastDate);
         } else {
             if (line == "") {
                 continue;
@@ -35,7 +40,7 @@ export function transformGitCommitHistory(commitHistory: string): Record<string,
 
 
 
-interface ganttDates {
+export interface ganttDates {
     startDate: DateTime;
     endDate: DateTime;
 }
