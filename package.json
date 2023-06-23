@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node src/index.ts",
     "debug": "ts-node src/index.ts --debug",
-    "debug-only": "ts-node src/index.ts --debug --quiet"
+    "debug-only": "ts-node src/index.ts --debug --quiet",
+    "help": "ts-node src/index.ts"
   },
   "repository": {
     "type": "git",

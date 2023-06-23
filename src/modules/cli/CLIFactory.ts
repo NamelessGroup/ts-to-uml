@@ -1,10 +1,11 @@
 import chalk from 'chalk'
+import cli from './cli'
 
-abstract class CLI {
+abstract class AbstractCLI {
 
-  protected readonly baseCLI: CLI;
+  protected baseCLI: AbstractCLI;
 
-  constructor(baseCLI?: CLI) {
+  constructor(baseCLI?: AbstractCLI) {
     if (baseCLI === undefined) {
         this.baseCLI = this
     } else {
@@ -29,7 +30,8 @@ abstract class CLI {
       this.baseCLI.error(message, terminate)
 
       if (terminate) {
-          this.terminate(1)
+        cli.error('Error was critical, Terminating process', false)
+        this.terminate(1)
       }
   }
 
@@ -65,7 +67,7 @@ abstract class CLI {
   }
 }
 
-class EmptyCLI extends CLI {
+class EmptyCLI extends AbstractCLI {
     constructor() {
         super()
     }
@@ -92,7 +94,7 @@ class EmptyCLI extends CLI {
 
 }
 
-class PlainCLI extends CLI {
+class PlainCLI extends AbstractCLI {
   
     constructor() {
         super()
@@ -104,10 +106,6 @@ class PlainCLI extends CLI {
 
   public error(message: string, terminate: boolean): void {
       console.log(chalk.red(message))
-
-      if (terminate) {
-          this.terminate(1)
-      }
   }
   
   public success(message: string) {
@@ -123,9 +121,9 @@ class PlainCLI extends CLI {
   }
 }
 
-class DebugCLI extends CLI {
+class DebugCLI extends AbstractCLI {
 
-  constructor(baseCLI: CLI) {
+  constructor(baseCLI: AbstractCLI) {
       super(baseCLI)
   }
 
@@ -134,9 +132,9 @@ class DebugCLI extends CLI {
   }
 }
 
-class QuietCLI extends CLI {
+class QuietCLI extends AbstractCLI {
 
-  constructor(baseCLI: CLI) {
+  constructor(baseCLI: AbstractCLI) {
       super(baseCLI)
   }
 
@@ -153,9 +151,9 @@ class QuietCLI extends CLI {
   }
 }
 
-class EmojiCLI extends CLI {
+class EmojiCLI extends AbstractCLI {
   
-      constructor(baseCLI: CLI) {
+      constructor(baseCLI: AbstractCLI) {
           super(baseCLI)
       }
   
@@ -180,8 +178,7 @@ class EmojiCLI extends CLI {
       }
 }
 
-function buildCLI(quiet: boolean = false, debug: boolean = false, emoji: boolean = true): CLI {
-    console.log(quiet, debug, emoji)
+function buildCLI(quiet: boolean = false, debug: boolean = false, emoji: boolean = true): AbstractCLI {
     let cli = new PlainCLI()
 
     if (quiet) {
@@ -199,5 +196,5 @@ function buildCLI(quiet: boolean = false, debug: boolean = false, emoji: boolean
     return cli
 }
 
-export { CLI, EmptyCLI }
+export { AbstractCLI, EmptyCLI }
 export default buildCLI

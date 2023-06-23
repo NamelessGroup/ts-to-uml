@@ -1,4 +1,4 @@
-import { main } from './modules/cli/cli';
+import cli from './modules/cli/cli';
 import {transformGitCommitHistory} from "./modules/gantt/commitparser";
 
-void main();
+void cli.main();
