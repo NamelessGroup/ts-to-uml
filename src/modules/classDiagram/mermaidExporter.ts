@@ -33,7 +33,7 @@ export function buildClassDiagram(content: TransformerOutput): string {
             }
             attr += a.name;
             if (a.type) {
-                attr += `: ${a.type.replaceAll(/<|>/g, "~").replaceAll(/,/g, ".").replaceAll(/\s/g, "")}`;
+                attr += `: ${escapeType(a.type)}`;
             }
             if (a.static) attr += "$";
 
@@ -56,14 +56,14 @@ export function buildClassDiagram(content: TransformerOutput): string {
             method += m.name + "(";
             method += m.parameters.map(par => { 
                 if (par.type) {
-                    return `${par.name}: ${par.type.replaceAll(/<|>/g, "~").replaceAll(/,/g, ".").replaceAll(/\s/g, "")}`
+                    return `${par.name}: ${escapeType(par.type)}`
                 }
                 return par.name
             }).join(", ");
             method += ")";
 
             if (m.returnType) {
-                method += `: ${m.returnType.replaceAll(/<|>/g, "~").replaceAll(/,/g, ".").replaceAll(/\s/g, "")}`;
+                method += `: ${escapeType(m.returnType)}`;
             }
 
             if (m.static) method += "$";
@@ -83,4 +83,11 @@ export function buildClassDiagram(content: TransformerOutput): string {
     }
 
     return mermaidString;
+}
+
+function escapeType(type: string): string {
+    return type
+        .replaceAll(/<|>/g, "~")
+        .replaceAll(/,/g, "，")
+        .replaceAll(/\s/g, "");
 }
