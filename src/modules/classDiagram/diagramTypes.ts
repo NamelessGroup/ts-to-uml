@@ -14,6 +14,7 @@ export interface ClassAttribute {
     visiblity: Visiblity;
     static: boolean;
     type?: string;
+    parsedTypes?: Set<string>;
 }
 
 export interface ClassMethod {
@@ -22,9 +23,11 @@ export interface ClassMethod {
     static: boolean;
     parameters: MethodParameter[];
     returnType?: string;
+    parsedReturnTypes?: Set<string>;
 }
 
 export interface MethodParameter {
     name: string;
     type?: string;
+    parsedTypes?: Set<string>;
 }

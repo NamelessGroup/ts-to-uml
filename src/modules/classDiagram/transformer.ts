@@ -1,4 +1,4 @@
-import { Project } from "ts-morph";
+import { Project, SyntaxKind, TypeNode } from "ts-morph";
 import { ClassNode, MethodParameter, Visiblity } from "./diagramTypes";
 import cli from "../cli/cli";
 
@@ -117,7 +117,8 @@ export function transformCode(options: TransformerOptions): TransformerOutput {
                 m.getParameters().forEach(par => {
                     parameters.push({
                         name: par.getName(),
-                        type: par.getTypeNode()?.getText()
+                        type: par.getTypeNode()?.getText(),
+                        parsedTypes: unpackType(par.getTypeNode())
                     });
                 });
 
@@ -126,7 +127,8 @@ export function transformCode(options: TransformerOptions): TransformerOutput {
                     visiblity: undefined,
                     static: false,
                     parameters,
-                    returnType: m.getReturnTypeNode()?.getText()
+                    returnType: m.getReturnTypeNode()?.getText(),
+                    parsedReturnTypes: unpackType(m.getReturnTypeNode())
                 });
             });
 
@@ -141,7 +143,8 @@ export function transformCode(options: TransformerOptions): TransformerOutput {
                     name: p.getName(),
                     visiblity,
                     static: isStatic,
-                    type: p.getTypeNode()?.getText()
+                    type: p.getTypeNode()?.getText(),
+                    parsedTypes: unpackType(p.getTypeNode())
                 });
             });
 
@@ -180,23 +183,59 @@ export function transformCode(options: TransformerOptions): TransformerOutput {
 
     classes.forEach(c => {
         c.attributes.forEach(a => {
-            if (a.type && a.type !== c.name && validClassNames.includes(a.type)) {
-                associations[c.name].add(a.type);
-            }
+            a.parsedTypes?.forEach(type => {
+                if (type !== c.name && validClassNames.includes(type)) {
+                    associations[c.name].add(type);
+                }
+            });
         });
 
         c.methods.forEach(m => {
-            if (m.returnType && m.returnType !== c.name && validClassNames.includes(m.returnType)) {
-                associations[c.name].add(m.returnType);
-            }
+            m.parsedReturnTypes?.forEach(type => {
+                if (type !== c.name && validClassNames.includes(type)) {
+                    associations[c.name].add(type);
+                }
+            });
 
             m.parameters.forEach(p => {
-                if (p.type && p.type !== c.name && validClassNames.includes(p.type)) {
-                    associations[c.name].add(p.type);
-                }
+                p.parsedTypes?.forEach(type => {
+                    if (type !== c.name && validClassNames.includes(type)) {
+                        associations[c.name].add(type);
+                    }
+                })
             })
         });
     });
 
     return {classes, associations};
+}
+
+/**
+ * Unpacking generics, union types, intersection types & arrays for association building.
+ */
+function unpackType(type?: TypeNode): Set<string> {
+    if (!type) {
+        return new Set();
+    }
+
+    let returnedTypes = new Set([type.getText()]);
+
+    if (type.isKind(SyntaxKind.TypeReference)) {
+        returnedTypes.add(type.getTypeName().getText());
+        for (const subType of type.getTypeArguments()) {
+            unpackType(subType).forEach(v => returnedTypes.add(v));
+        }
+    }
+
+    if (type.isKind(SyntaxKind.UnionType) || type.isKind(SyntaxKind.IntersectionType)) {
+        for (const subType of type.getTypeNodes()) {
+            unpackType(subType).forEach(v => returnedTypes.add(v));
+        }
+    }
+
+    if (type.isKind(SyntaxKind.ArrayType)) {
+        unpackType(type.getElementTypeNode()).forEach(v => returnedTypes.add(v));
+    }
+
+    return returnedTypes;
 }

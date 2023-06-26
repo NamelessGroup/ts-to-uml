@@ -33,7 +33,7 @@ export function buildClassDiagram(content: TransformerOutput): string {
             }
             attr += a.name;
             if (a.type) {
-                attr += `: ${a.type.replaceAll(/<|>/g, "~")}`;
+                attr += `: ${a.type.replaceAll(/<|>/g, "~").replaceAll(/,/g, ".").replaceAll(/\s/g, "")}`;
             }
             if (a.static) attr += "$";
 
@@ -56,14 +56,14 @@ export function buildClassDiagram(content: TransformerOutput): string {
             method += m.name + "(";
             method += m.parameters.map(par => { 
                 if (par.type) {
-                    return `${par.name}: ${par.type.replaceAll(/<|>/g, "~")}`
+                    return `${par.name}: ${par.type.replaceAll(/<|>/g, "~").replaceAll(/,/g, ".").replaceAll(/\s/g, "")}`
                 }
                 return par.name
             }).join(", ");
             method += ")";
 
             if (m.returnType) {
-                method += `: ${m.returnType.replaceAll(/<|>/g, "~")}`;
+                method += `: ${m.returnType.replaceAll(/<|>/g, "~").replaceAll(/,/g, ".").replaceAll(/\s/g, "")}`;
             }
 
             if (m.static) method += "$";
@@ -78,7 +78,7 @@ export function buildClassDiagram(content: TransformerOutput): string {
 
     for (const c in content.associations) {
         content.associations[c].forEach(t => {
-            mermaidString += `${c} ..> ${t}\n`;
+            mermaidString += " ".repeat(4) + `${c} ..> ${t}\n`;
         });
     }
 
